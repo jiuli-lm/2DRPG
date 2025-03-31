@@ -5,14 +5,14 @@ using UnityEngine;
 public class EnemyState : EnemyStateMachine
 {
     protected EnemyStateMachine stateMachine;
-    protected Enemy enemy;
+    protected Enemy enemyBase;
 
     private string animBoolName;
     protected float stateTimer;
     protected bool triggerCalled;
 
-    public EnemyState(Enemy _enemy ,EnemyStateMachine _stateMachine, string _animBoolName){
-        enemy = _enemy;
+    public EnemyState(Enemy _enemyBase ,EnemyStateMachine _stateMachine, string _animBoolName){
+        enemyBase = _enemyBase;
         stateMachine = _stateMachine;
         animBoolName = _animBoolName;
     }
@@ -22,10 +22,10 @@ public class EnemyState : EnemyStateMachine
 
     public virtual void Enter(){
         triggerCalled = false;
-        enemy.anim.SetBool(animBoolName,true);
+        enemyBase.anim.SetBool(animBoolName,true);
     }
     public virtual void Exit(){
-        enemy.anim.SetBool(animBoolName,false);
+        enemyBase.anim.SetBool(animBoolName,false);
     }
 
 }

@@ -14,13 +14,19 @@ public class Entity : MonoBehaviour
 
     public int facingDir{get; private set;} = 1;
     private bool facingRight = true;
+    
+    #region 角色组件
+    public Animator anim{get; private set;}
+    public Rigidbody2D rb{get; private set;}
+    #endregion
 
     protected virtual void Awake(){
         
     }
 
     protected virtual void Start(){
-
+        anim = GetComponentInChildren<Animator>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     protected virtual void Update(){
@@ -38,13 +44,13 @@ public class Entity : MonoBehaviour
     #endregion
 
     #region 翻转
-    public void Filp()
+    public virtual void Filp()
     {
         facingDir = facingDir * -1;
         facingRight = !facingRight;
         transform.Rotate(0, 180, 0);
     }
-    public void FlipController(float x)
+    public virtual void FlipController(float x)
     {
         if(x > 0 && !facingRight){
             Filp();
@@ -55,4 +61,15 @@ public class Entity : MonoBehaviour
     }
     #endregion
 
+    #region 速度
+    //设置速度0
+    public void ZeroVelocity() => rb.velocity = new Vector2(0,0);
+    //传递刚体的速度
+    public void SetVelocity(float x_velocity, float y_velocity)
+    {
+        rb.velocity = new Vector2(x_velocity, y_velocity);
+        FlipController(x_velocity);
+    }
+    #endregion
+    
 }

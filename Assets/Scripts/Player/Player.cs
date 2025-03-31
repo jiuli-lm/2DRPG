@@ -21,14 +21,8 @@ public class Player: Entity
     public float dashDuration;
     public float dashDir {get; private set; }
 
-
-    #region 角色组件
-
-    public Animator anim{get; private set;}
-    public Rigidbody2D rb{get; private set;}
+    
     public PlayerStateMachine stateMachine { get;  private set; }
-
-    #endregion
     
     #region 角色状态
 
@@ -45,6 +39,7 @@ public class Player: Entity
 
     protected override void Awake()
     {
+        base.Awake();
         stateMachine = new PlayerStateMachine();
         
         idleState = new PlayerIdleState(this, stateMachine, "Idle");
@@ -59,13 +54,13 @@ public class Player: Entity
 
     protected override void Start()
     {
-        anim = GetComponentInChildren<Animator>();
-        rb = GetComponent<Rigidbody2D>();
-
+        base.Start();
         stateMachine.Initialize(idleState);
+        
     }
     protected override void Update()
     {
+        base.Update();
         stateMachine.currentState.Update();
         CheckDashInput();
 
@@ -95,16 +90,4 @@ public class Player: Entity
             stateMachine.ChangeState(dashState);
         }
     }
-    
-    #region 速度
-    //设置速度0
-    public void ZeroVelocity() => rb.velocity = new Vector2(0,0);
-    //传递刚体的速度
-    public void SetVelocity(float x_velocity, float y_velocity)
-    {
-        rb.velocity = new Vector2(x_velocity, y_velocity);
-        FlipController(x_velocity);
-    }
-    #endregion
-
 }

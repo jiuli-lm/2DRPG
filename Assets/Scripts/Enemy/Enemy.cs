@@ -2,30 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : Entity
 {
-    #region 敌人属性
+    [Header("敌人属性")]
+    public float moveSpeed;
 
-    #endregion
-
-    #region 敌人组件
-    public Rigidbody2D rb {get; private set;}
-    public Animator anim {get; private set;}
+    public float idleTime;
+    
     public EnemyStateMachine stateMachine{get; private set;}
-
-    #endregion
-
-    #region 敌人状态
-
-    #endregion
-
-    private void Awake()
+    
+    protected override void Awake()
     {
+        base.Awake();
         stateMachine = new EnemyStateMachine();
     }
 
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
         stateMachine.currentState.Update();
     }
 
