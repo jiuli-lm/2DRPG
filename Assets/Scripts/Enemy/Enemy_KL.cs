@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class Enemy_KL : Enemy
 {
-    #region 敌人状态
+    #region 骷髅敌人状态
     
     public KLIdleState idleState{get; private set;}
     public KLMoveState moveState{get; private set;}
+    public KLBattleState battleState{get; private set;}
+    public KLAttackState attackState{get; private set;}
 
     #endregion
     
@@ -16,6 +18,8 @@ public class Enemy_KL : Enemy
         base.Awake();
         idleState = new KLIdleState(this, stateMachine, "Idle", this);
         moveState = new KLMoveState(this, stateMachine, "Move", this);
+        battleState = new KLBattleState(this, stateMachine, "Move", this);
+        attackState = new KLAttackState(this, stateMachine, "Attack", this);
     }
     
     protected override void Start()

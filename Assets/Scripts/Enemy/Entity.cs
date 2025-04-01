@@ -63,7 +63,7 @@ public class Entity : MonoBehaviour
 
     #region 速度
     //设置速度0
-    public void ZeroVelocity() => rb.velocity = new Vector2(0,0);
+    public void SetZeroVelocity() => rb.velocity = new Vector2(0,0);
     //传递刚体的速度
     public void SetVelocity(float x_velocity, float y_velocity)
     {

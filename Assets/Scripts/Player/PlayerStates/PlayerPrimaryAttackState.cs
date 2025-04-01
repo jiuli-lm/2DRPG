@@ -45,7 +45,7 @@ public class PlayerPrimaryAttackState : PlayerState
         base.Update();
         if(stateTimer < 0)
             //攻击后速度置为0 不会滑步
-            player.ZeroVelocity();
+            player.SetZeroVelocity();
 
         if(triggerCalled)
             stateMachine.ChangeState(player.idleState);

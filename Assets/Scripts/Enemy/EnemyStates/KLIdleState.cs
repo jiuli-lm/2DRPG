@@ -2,13 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class KLIdleState : EnemyState
+public class KLIdleState : KLGroundedState
 {
-    private Enemy_KL enemy;
-    
-    public KLIdleState(Enemy _enemyBase, EnemyStateMachine _stateMachine, string _animBoolName,Enemy_KL _enemy) : base(_enemyBase, _stateMachine, _animBoolName)
+    public KLIdleState(Enemy _enemyBase, EnemyStateMachine _stateMachine, string _animBoolName, Enemy_KL _enemy) : base(_enemyBase, _stateMachine, _animBoolName, _enemy)
     {
-        enemy = _enemy;
     }
 
     public override void Update()
@@ -16,6 +13,7 @@ public class KLIdleState : EnemyState
         base.Update();
         if(stateTimer < 0)
             stateMachine.ChangeState(enemy.moveState);
+        
     }
 
     public override void Enter()
