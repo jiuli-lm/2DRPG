@@ -2,13 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player: Entity
 {
     [Header("攻击细节")]
     public Vector2[] attackMovement;
+    public float counterAttackDuration = .2f;
+    
     public bool isBusy {get; private set;}//攻击僵直
     [Header("角色属性")]
     public float moveSpeed = 12f;
@@ -34,7 +35,8 @@ public class Player: Entity
     public PlayerWallSlideState wallSlide{get; private set;}
     public PlayerWallJumpState wallJump{get; private set;}
     public PlayerPrimaryAttackState primaryAttack{get; private set;}
-
+    public PlayerCounterAttackState counterAttack{get; private set;}
+    
     #endregion
 
     protected override void Awake()
@@ -50,6 +52,7 @@ public class Player: Entity
         wallSlide = new PlayerWallSlideState(this, stateMachine, "WallSlider");
         wallJump = new PlayerWallJumpState(this, stateMachine,"Jump");
         primaryAttack = new PlayerPrimaryAttackState(this, stateMachine, "Attack");
+        counterAttack = new PlayerCounterAttackState(this, stateMachine, "CounterAttack");
     }
 
     protected override void Start()

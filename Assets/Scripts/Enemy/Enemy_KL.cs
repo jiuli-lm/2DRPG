@@ -10,7 +10,8 @@ public class Enemy_KL : Enemy
     public KLMoveState moveState{get; private set;}
     public KLBattleState battleState{get; private set;}
     public KLAttackState attackState{get; private set;}
-
+    public KLStunState stunState{get; private set;}
+    
     #endregion
     
     protected override void Awake()
@@ -20,6 +21,7 @@ public class Enemy_KL : Enemy
         moveState = new KLMoveState(this, stateMachine, "Move", this);
         battleState = new KLBattleState(this, stateMachine, "Move", this);
         attackState = new KLAttackState(this, stateMachine, "Attack", this);
+        stunState = new KLStunState(this,stateMachine,"Stun", this);
     }
     
     protected override void Start()
@@ -31,7 +33,21 @@ public class Enemy_KL : Enemy
     protected override void Update()
     {
         base.Update();
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            stateMachine.ChangeState(stunState);
+        }
+        
     }
 
+    public override bool CheckCanBeStunned()
+    {
+        if (base.CheckCanBeStunned())
+        {
+            stateMachine.ChangeState(stunState);
+            return true;
+        }
 
+        return false;
+    }
 }

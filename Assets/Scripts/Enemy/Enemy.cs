@@ -7,6 +7,12 @@ public class Enemy : Entity
     [SerializeField]
     protected LayerMask whatIsPlayer;
     
+    [Header("震慑信息")]
+    public float stunDuration;
+    public Vector2 stunDirection;
+    protected bool canBeStunned;
+    [SerializeField] protected GameObject countImage;
+    
     [Header("敌人移动")]
     public float moveSpeed;
     public float idleTime;
@@ -32,6 +38,28 @@ public class Enemy : Entity
         
         
     }
+    
+    public virtual void OpenCounterAttackWindow()
+    {
+        canBeStunned = true;
+        countImage.SetActive(true);
+    }
+    public virtual void CloseCounterAttackWindow()
+    {
+        canBeStunned = false;
+        countImage.SetActive(false);
+    }
+    
+    public virtual bool CheckCanBeStunned()
+    {
+        if (canBeStunned)
+        {
+            CloseCounterAttackWindow();
+            return true;
+        }
+        return false;
+    }
+    
     
     public virtual void AnimationFinishTrigger() => stateMachine.currentState.AnimationFinishTrigger();
 
