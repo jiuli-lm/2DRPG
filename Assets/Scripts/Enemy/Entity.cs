@@ -27,8 +27,8 @@ public class Entity : MonoBehaviour
     #region 角色组件
     public Animator anim{get; private set;}
     public Rigidbody2D rb{get; private set;}
-    
     public EntityFX fx {get; private set;}
+    
     #endregion
 
     protected virtual void Awake(){

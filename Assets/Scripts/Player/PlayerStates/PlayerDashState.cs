@@ -10,6 +10,7 @@ public class PlayerDashState : PlayerState
     public override void Enter()
     {
         base.Enter();
+        player.skill.clone.CreateClone(player.transform);
         stateTimer = player.dashDuration; // 设置冲刺状态的持续时间
     }
     public override void Update()

@@ -21,7 +21,7 @@ public class KLGroundedState : EnemyState
     public override void Enter()
     {
         base.Enter();
-        player = GameObject.Find("Player").transform;
+        player = PlayerManager.Instance.player.transform;
     }
 
     public override void Exit()

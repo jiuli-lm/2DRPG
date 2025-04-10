@@ -16,12 +16,12 @@ public class Player: Entity
     public float jumpForce;
     public float wallSlideSpeed = 2f;
     [Header("冲刺属性")]
-    [SerializeField] private float dashCooldown;
-    private float dashUsageTimer;
+    [SerializeField]
     public float dashSpeed;
     public float dashDuration;
     public float dashDir {get; private set; }
 
+    public SkillManager skill { get; private set; }
     
     public PlayerStateMachine stateMachine { get;  private set; }
     
@@ -38,7 +38,7 @@ public class Player: Entity
     public PlayerCounterAttackState counterAttack{get; private set;}
     
     #endregion
-
+    
     protected override void Awake()
     {
         base.Awake();
@@ -58,6 +58,7 @@ public class Player: Entity
     protected override void Start()
     {
         base.Start();
+        skill = SkillManager.Instance;
         stateMachine.Initialize(idleState);
         
     }
@@ -80,16 +81,14 @@ public class Player: Entity
     private void CheckDashInput()
     {
         if(IsWallDetected()) return;
-
-        dashUsageTimer -= Time.deltaTime;
-        if ((Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.Mouse1)) && dashUsageTimer < 0)
+        
+        if ((Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.Mouse1)) 
+            && SkillManager.Instance.dash.CanUseSkill())
         {
-            dashUsageTimer = dashCooldown; // 重置冲刺冷却时间
             dashDir = Input.GetAxisRaw("Horizontal");
             if (dashDir == 0)
-            {
                 dashDir = facingDir; // 如果没有输入方向，则使用当前朝向
-            }
+            
             stateMachine.ChangeState(dashState);
         }
     }
