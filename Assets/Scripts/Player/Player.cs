@@ -15,6 +15,8 @@ public class Player: Entity
     public float moveSpeed = 12f;
     public float jumpForce;
     public float wallSlideSpeed = 2f;
+    public float swordReturnSpeed;
+    
     [Header("冲刺属性")]
     [SerializeField]
     public float dashSpeed;
@@ -22,6 +24,7 @@ public class Player: Entity
     public float dashDir {get; private set; }
 
     public SkillManager skill { get; private set; }
+    public GameObject sword;
     
     public PlayerStateMachine stateMachine { get;  private set; }
     
@@ -36,6 +39,8 @@ public class Player: Entity
     public PlayerWallJumpState wallJump{get; private set;}
     public PlayerPrimaryAttackState primaryAttack{get; private set;}
     public PlayerCounterAttackState counterAttack{get; private set;}
+    public PlayerAimSwordState aimSword{get; private set;}
+    public PlayerCatchSwordState catchSword{get; private set;}
     
     #endregion
     
@@ -53,6 +58,10 @@ public class Player: Entity
         wallJump = new PlayerWallJumpState(this, stateMachine,"Jump");
         primaryAttack = new PlayerPrimaryAttackState(this, stateMachine, "Attack");
         counterAttack = new PlayerCounterAttackState(this, stateMachine, "CounterAttack");
+        
+        aimSword = new PlayerAimSwordState(this, stateMachine, "AimSword");
+        catchSword = new PlayerCatchSwordState(this, stateMachine, "CatchSword");
+        
     }
 
     protected override void Start()
@@ -69,6 +78,18 @@ public class Player: Entity
         CheckDashInput();
 
     }
+    
+    public void AssignNewSword(GameObject newSword)
+    {
+        sword = newSword;
+    }
+
+    public void CatchTheSword()
+    {
+        stateMachine.ChangeState(catchSword);
+        Destroy(sword);
+    }
+    
     public IEnumerator BusyFor(float seconds){
         isBusy = true;
         yield return new WaitForSeconds(seconds);
@@ -82,8 +103,7 @@ public class Player: Entity
     {
         if(IsWallDetected()) return;
         
-        if ((Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.Mouse1)) 
-            && SkillManager.Instance.dash.CanUseSkill())
+        if (Input.GetKeyDown(KeyCode.LeftShift) && SkillManager.Instance.dash.CanUseSkill() )
         {
             dashDir = Input.GetAxisRaw("Horizontal");
             if (dashDir == 0)

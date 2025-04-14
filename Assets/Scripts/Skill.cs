@@ -8,6 +8,13 @@ public class Skill : MonoBehaviour
     protected float cooldown;
     protected float cooldownTimer; // 技能冷却时间
 
+    protected Player player;
+
+    protected virtual void Start()
+    {
+        player = PlayerManager.Instance.player;
+    }
+    
     protected virtual void Update()
     {
         cooldownTimer -= Time.deltaTime;
