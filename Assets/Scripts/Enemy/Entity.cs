@@ -28,6 +28,7 @@ public class Entity : MonoBehaviour
     public Animator anim{get; private set;}
     public Rigidbody2D rb{get; private set;}
     public EntityFX fx {get; private set;}
+    public SpriteRenderer sr{get; private set;}
     
     #endregion
 
@@ -35,10 +36,12 @@ public class Entity : MonoBehaviour
         
     }
 
-    protected virtual void Start(){
-        fx = GetComponentInChildren<EntityFX>();
+    protected virtual void Start()
+    {
+        sr = GetComponentInChildren<SpriteRenderer>();
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        fx = GetComponent<EntityFX>();
     }
 
     protected virtual void Update(){
@@ -109,5 +112,13 @@ public class Entity : MonoBehaviour
         FlipController(x_velocity);
     }
     #endregion
+    
+    public void MakeTransparent(bool transparent)
+    {
+        if(transparent)
+            sr.color = Color.clear;
+        else
+            sr.color = Color.white;
+    }
     
 }

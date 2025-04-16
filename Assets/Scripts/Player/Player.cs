@@ -41,6 +41,7 @@ public class Player: Entity
     public PlayerCounterAttackState counterAttack{get; private set;}
     public PlayerAimSwordState aimSword{get; private set;}
     public PlayerCatchSwordState catchSword{get; private set;}
+    public PlayerBlackHoleState blackHole{get; private set;}
     
     #endregion
     
@@ -56,11 +57,13 @@ public class Player: Entity
         dashState = new PlayerDashState(this, stateMachine, "Dash");
         wallSlide = new PlayerWallSlideState(this, stateMachine, "WallSlider");
         wallJump = new PlayerWallJumpState(this, stateMachine,"Jump");
+        
         primaryAttack = new PlayerPrimaryAttackState(this, stateMachine, "Attack");
         counterAttack = new PlayerCounterAttackState(this, stateMachine, "CounterAttack");
         
         aimSword = new PlayerAimSwordState(this, stateMachine, "AimSword");
         catchSword = new PlayerCatchSwordState(this, stateMachine, "CatchSword");
+        blackHole = new PlayerBlackHoleState(this, stateMachine,"Jump");
         
     }
 
@@ -89,6 +92,7 @@ public class Player: Entity
         stateMachine.ChangeState(catchSword);
         Destroy(sword);
     }
+    
     
     public IEnumerator BusyFor(float seconds){
         isBusy = true;

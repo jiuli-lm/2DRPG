@@ -8,6 +8,7 @@ public class SkillManager : Singleton<SkillManager>
     public DashSkill  dash {get;private set;}
     public CloneSkill clone { get;private set; }
     public SwordSkill sword {get;private set;}
+    public BlackHoleSkill blackHole {get;private set;}
     
 
     private void Start()
@@ -15,5 +16,6 @@ public class SkillManager : Singleton<SkillManager>
         dash = GetComponent<DashSkill>();
         clone = GetComponent<CloneSkill>();
         sword = GetComponent<SwordSkill>();
+        blackHole = GetComponent<BlackHoleSkill>();
     }
 }
