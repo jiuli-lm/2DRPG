@@ -117,6 +117,8 @@ public class SwordSkillController : MonoBehaviour
             if (wasStopped)
             {
                 spinTimer -= Time.deltaTime;
+                transform.position = Vector2.MoveTowards(transform.position, new Vector2(transform.position.x + 1, transform.position.y),2.4f * Time.deltaTime);
+                
                 if (spinTimer < 0)
                 {
                     isReturning = true;
@@ -130,7 +132,7 @@ public class SwordSkillController : MonoBehaviour
                     foreach (var hit in colliders)
                     {
                         if (hit.GetComponent<Enemy>() != null)
-                            hit.GetComponent<Enemy>().Damage();
+                            SwordSkillDamage(hit.GetComponent<Enemy>());
                     }
                 }
                 
@@ -153,7 +155,8 @@ public class SwordSkillController : MonoBehaviour
                 enemyTarget[targetIndex].position, bounceSpeed * Time.deltaTime);
             if (Vector2.Distance(transform.position, enemyTarget[targetIndex].position) < .1f)
             {
-                enemyTarget[targetIndex].GetComponent<Enemy>().Damage();
+                //enemyTarget[targetIndex].GetComponent<Enemy>().DamageEffect();
+                SwordSkillDamage(enemyTarget[targetIndex].GetComponent<Enemy>());
                 
                 targetIndex++;
                 bounceAmout--;
@@ -171,11 +174,22 @@ public class SwordSkillController : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(isReturning) return;
-        collision.GetComponent<Enemy>()?.Damage();
+        if (collision.GetComponent<Enemy>() != null)
+        {
+            Enemy enemy = collision.GetComponent<Enemy>();
+            SwordSkillDamage(enemy);
+
+        }
         SetupTargetForBounce(collision);
         StuckInto(collision);
     }
 
+    private void SwordSkillDamage(Enemy enemy)
+    {
+        player.stats.DoDamage(enemy.GetComponent<CharacterStats>());
+       // enemy.StartCoroutine("FreezeTimerFor", freezeTimeDuration);
+    }
+    
     private void SetupTargetForBounce(Collider2D collision)
     {
         if (collision.GetComponent<Enemy>() != null)

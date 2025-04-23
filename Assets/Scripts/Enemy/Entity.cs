@@ -4,7 +4,16 @@ using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 
 public class Entity : MonoBehaviour
-{
+{ 
+    #region 角色组件
+    public Animator anim{get; private set;}
+    public Rigidbody2D rb{get; private set;}
+    public EntityFX fx {get; private set;}
+    public SpriteRenderer sr{get; private set;}
+    public CharacterStats stats{get; private set;}
+    public CapsuleCollider2D cd{get; private set;}
+    #endregion
+     
     [Header("击退信息")]
     [SerializeField] protected Vector2 knockbackDirection;
     [SerializeField] protected float konockbackDuration;
@@ -23,15 +32,9 @@ public class Entity : MonoBehaviour
     
     public int facingDir{get; private set;} = 1;
     private bool facingRight = true;
-    
-    #region 角色组件
-    public Animator anim{get; private set;}
-    public Rigidbody2D rb{get; private set;}
-    public EntityFX fx {get; private set;}
-    public SpriteRenderer sr{get; private set;}
-    
-    #endregion
 
+    public System.Action onFlipped;
+    
     protected virtual void Awake(){
         
     }
@@ -42,20 +45,26 @@ public class Entity : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody2D>();
         fx = GetComponent<EntityFX>();
+        stats = GetComponent<CharacterStats>();
+        cd = GetComponent<CapsuleCollider2D>();
     }
 
     protected virtual void Update(){
         
     }
 
-    public virtual void Damage()
+    public virtual void SlowEntityBy(float slowPercentage, float slowDuration)
     {
-        fx.StartCoroutine("FlashFX");
-        StartCoroutine("HitKnockDirection");
-        
-        Debug.Log($"{gameObject.name} 受伤了");
-    }
 
+    }
+    public virtual void ReturnDefaultSpeed()
+    {
+        anim.speed = 1;   
+    }
+    
+    public virtual void DamageImpact()=>
+        StartCoroutine("HitKnockDirection");
+    
     protected virtual IEnumerator HitKnockDirection()
     {
         isKnocked = true;
@@ -84,6 +93,8 @@ public class Entity : MonoBehaviour
         facingDir = facingDir * -1;
         facingRight = !facingRight;
         transform.Rotate(0, 180, 0);
+
+        onFlipped?.Invoke();
     }
     public virtual void FlipController(float x)
     {
@@ -113,12 +124,10 @@ public class Entity : MonoBehaviour
     }
     #endregion
     
-    public void MakeTransparent(bool transparent)
+
+    public virtual void Die()
     {
-        if(transparent)
-            sr.color = Color.clear;
-        else
-            sr.color = Color.white;
+        
     }
     
 }

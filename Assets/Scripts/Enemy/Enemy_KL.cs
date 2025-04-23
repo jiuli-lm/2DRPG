@@ -11,7 +11,7 @@ public class Enemy_KL : Enemy
     public KLBattleState battleState{get; private set;}
     public KLAttackState attackState{get; private set;}
     public KLStunState stunState{get; private set;}
-    
+    public KLDeadState deadState{get; private set;}
     #endregion
     
     protected override void Awake()
@@ -22,6 +22,7 @@ public class Enemy_KL : Enemy
         battleState = new KLBattleState(this, stateMachine, "Move", this);
         attackState = new KLAttackState(this, stateMachine, "Attack", this);
         stunState = new KLStunState(this,stateMachine,"Stun", this);
+        deadState = new KLDeadState(this, stateMachine, "Idle", this);
     }
     
     protected override void Start()
@@ -49,5 +50,11 @@ public class Enemy_KL : Enemy
         }
 
         return false;
+    }
+
+    public override void Die()
+    {
+        base.Die();
+        stateMachine.ChangeState(deadState);
     }
 }

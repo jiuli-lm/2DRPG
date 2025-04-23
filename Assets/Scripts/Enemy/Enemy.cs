@@ -16,6 +16,7 @@ public class Enemy : Entity
     [Header("敌人移动")]
     public float moveSpeed;
     public float idleTime;
+    private float defaultSpeed;
     
     [Header("敌人攻击")]
     public float attackDistance;
@@ -24,6 +25,7 @@ public class Enemy : Entity
     public float battleTime;
     
     public EnemyStateMachine stateMachine{get; private set;}
+    public string lastAnimBoolName { get; private set; }
     
     protected override void Awake()
     {
@@ -34,11 +36,27 @@ public class Enemy : Entity
     protected override void Update()
     {
         base.Update();
+        
         stateMachine.currentState.Update();
-        
-        
     }
-    
+
+    public override void SlowEntityBy(float slowPercentage, float slowDuration)
+    {
+        moveSpeed = moveSpeed * (1 - slowPercentage);
+        anim.speed = anim.speed * (1 - slowPercentage);
+        
+        Invoke("ReturnDefaultSpeed",slowDuration);
+    }
+
+    public virtual void AssignLastAnimBoolName(string animBoolName)=>
+        lastAnimBoolName = animBoolName;
+
+    public override void ReturnDefaultSpeed()
+    {
+        base.ReturnDefaultSpeed();
+        moveSpeed = defaultSpeed;
+    }
+
     public virtual void OpenCounterAttackWindow()
     {
         canBeStunned = true;

@@ -29,6 +29,6 @@ public class KLStunState : EnemyState
     public override void Exit()
     {
         base.Exit();
-        enemy.fx.Invoke("CannelRedBlink",0);
+        enemy.fx.Invoke("CannelColorChange",0);
     }
 }

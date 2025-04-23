@@ -24,7 +24,6 @@ public class CloneSkill : Skill
     
     public void CreateClone(Transform clonePosition, Vector3 _offset)
     {
-
         if (crystalInsteadOfClone)
         {
             SkillManager.Instance.crystal.CreateCrystal();
@@ -32,7 +31,7 @@ public class CloneSkill : Skill
         }
         
         GameObject newClone = Instantiate(clonePrefab);
-        newClone.GetComponent<CloneSkillController>().SetupClone(clonePosition, cloneDuration,canAttack,_offset,FindClosestEnemy(newClone.transform),canDuplicateClone,chanceToDuplicate);
+        newClone.GetComponent<CloneSkillController>().SetupClone(clonePosition, cloneDuration,canAttack,_offset,FindClosestEnemy(newClone.transform),canDuplicateClone,chanceToDuplicate,player);
     }
 
     public void CreateCloneOnDashStart()
