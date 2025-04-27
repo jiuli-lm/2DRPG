@@ -15,14 +15,18 @@ public class PlayerAnimationTrigger : MonoBehaviour
             if(hit.GetComponent<Enemy>() != null)
             {
                 EnemyStats _target = hit.GetComponent<EnemyStats>();
-                player.stats.DoDamage(_target);
+                
+                if (_target != null)
+                    player.stats.DoDamage(_target);
                 
                 // 修改前
                 // hit.GetComponent<Enemy>().Damage();
+
+                Inventory.Instance?.GetEquipment(EquipmentType.Weapon)?.Effect(_target.transform);
             }
         }
     }
-
+    
     private void ThrowSword()
     {
         SkillManager.Instance.sword.CreateSword();
