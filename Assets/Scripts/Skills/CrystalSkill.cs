@@ -44,7 +44,16 @@ public class CrystalSkill : Skill
         unlockMultiStackButton.GetComponent<Button>().onClick.AddListener(UnlockMultiStack);
         
     }
-    
+
+    protected override void CheckUnlock()
+    {
+        UnlockCrystal();
+        UnlockExplosive();
+        UnlockMovingCrystal();
+        UnlockMultiStack();
+        UnlockCloneInstead();
+    }
+
     private void UnlockCloneInstead()
     {
         if (unlockCloneInsteadButton.unlocked)

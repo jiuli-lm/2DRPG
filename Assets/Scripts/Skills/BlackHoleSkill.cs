@@ -33,6 +33,11 @@ public class BlackHoleSkill : Skill
         return base.CanUseSkill();
     }
 
+    protected override void CheckUnlock()
+    {
+        UnlockBlackHole();
+    }
+
     private void UnlockBlackHole()
     {
         if (blackHoleUnlockButton.unlocked)
