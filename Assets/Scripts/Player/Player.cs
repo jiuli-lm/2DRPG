@@ -89,10 +89,9 @@ public class Player: Entity
         stateMachine.currentState.Update();
         CheckDashInput();
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
+        if (Input.GetKeyDown(KeyCode.F) && skill.crystal.crystalUnlocked)
             skill.crystal.CanUseSkill();
-        }
+        
         
         if (Input.GetKeyDown(KeyCode.Alpha1))
             Inventory.Instance.UseFlask();
@@ -142,6 +141,7 @@ public class Player: Entity
     private void CheckDashInput()
     {
         if(IsWallDetected()) return;
+        if(skill.dash.dashUnlocked == false) return;
         
         if (Input.GetKeyDown(KeyCode.LeftShift) && SkillManager.Instance.dash.CanUseSkill() )
         {

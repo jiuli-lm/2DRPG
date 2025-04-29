@@ -6,6 +6,18 @@ using UnityEngine;
 public class PlayerManager : Singleton<PlayerManager>
 {
     public Player player;
-    
+    public int currency;//货币
 
+    public bool HaveEnoughMoney(int _price)
+    {
+        if (_price > currency)
+        {
+            Debug.Log("Not enough money");
+            return false;
+        }
+        currency = currency - _price;
+        return true;
+    }
+    public int GetCurrency() => currency;
+    
 }

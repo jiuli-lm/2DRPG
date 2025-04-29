@@ -16,8 +16,10 @@ MonoBehaviour:
   itemName: IceFire
   icon: {fileID: 1398721256, guid: a9ca9a41598dd2e44b125928045c518f, type: 3}
   dropChance: 14.8
+  itemCooldown: 0
   itemEffects:
   - {fileID: 11400000, guid: ec86ee122b6fd304aa8991d699fe7411, type: 2}
+  - {fileID: 11400000, guid: 5e5090f5414382742b0159d66683dc10, type: 2}
   equipmentType: 0
   strength: 0
   agility: 0
@@ -31,6 +33,6 @@ MonoBehaviour:
   evasion: 0
   magicResistance: 0
   fireDamage: 5
-  iceDamage: 5
+  iceDamage: 7
   lightingDamage: 0
   craftingMaterials: []

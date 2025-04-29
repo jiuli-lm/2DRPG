@@ -1,26 +1,82 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CloneSkill : Skill
 {
     [Header("克隆信息")]
+    [SerializeField] private float attackMultiplier;
     [SerializeField] private GameObject clonePrefab; // 克隆体预制体
     [SerializeField] private float cloneDuration; // 克隆体持续时间
-    [Space]
-    [SerializeField] private bool canAttack; // 克隆体是否可以攻击
-
-    [SerializeField] private bool creatCloneOnDashStart;
-    [SerializeField] private bool creatCloneOnDashOver;
-    [SerializeField] private bool canCloneOnCounterAttack;
+    [Space] 
     
-    [Header("克隆复制攻击信息")]
+    [Header("克隆攻击")] 
+    [SerializeField] private UI_SkillTreeSlot cloneAttackUnlockedButton;
+    [SerializeField] private float cloneAttackMultiplier; // 克隆体攻击倍率
+    [SerializeField] private bool canAttack; // 克隆体是否可以攻击
+    
+    [Header("积极性克隆？")]
+    [SerializeField] private UI_SkillTreeSlot aggressiveCloneUnlockedButton;
+    [SerializeField] private float aggressiveCloneAttackMultiplier;
+    public bool canApplyOnHitEffect{get;private set;}
+    
+    
+    [Header("多克隆")]
+    [SerializeField] private UI_SkillTreeSlot multipleUnlockedButton;
+    [SerializeField] private float multipleCloneAttackMultiplier;
     [SerializeField] private bool canDuplicateClone;
     [SerializeField] private float chanceToDuplicate;
     
     [Header("水晶替代克隆")]
+    [SerializeField] private UI_SkillTreeSlot crystalInsteadUnlockedButton;
     public bool crystalInsteadOfClone;
-    
+
+    protected override void Start()
+    {
+        base.Start();
+
+        cloneAttackUnlockedButton.GetComponent<Button>().onClick.AddListener(UnlockCloneAttack);
+        aggressiveCloneUnlockedButton.GetComponent<Button>().onClick.AddListener(UnlockAggressiveClone);
+        multipleUnlockedButton.GetComponent<Button>().onClick.AddListener(UnlockMultipleClone);
+        crystalInsteadUnlockedButton.GetComponent<Button>().onClick.AddListener(UnlockCrystalInstead);
+    }
+
+
+    #region 技能解锁
+
+    private void UnlockCloneAttack()
+    {
+        if (cloneAttackUnlockedButton.unlocked)
+        {
+            canAttack = true;
+            attackMultiplier = cloneAttackMultiplier;
+        }
+    }
+    private void UnlockAggressiveClone()
+    {
+        if (aggressiveCloneUnlockedButton.unlocked)
+        {
+            canApplyOnHitEffect = true;
+            attackMultiplier = aggressiveCloneAttackMultiplier;
+        }
+    }
+    private void UnlockMultipleClone()
+    {
+        if (multipleUnlockedButton.unlocked)
+        {
+            canDuplicateClone = true;
+            attackMultiplier = multipleCloneAttackMultiplier;
+        }
+    }
+    private void UnlockCrystalInstead()
+    {
+        if (crystalInsteadUnlockedButton.unlocked)
+            crystalInsteadOfClone = true;
+        
+    }
+
+    #endregion
     
     public void CreateClone(Transform clonePosition, Vector3 _offset)
     {
@@ -31,30 +87,15 @@ public class CloneSkill : Skill
         }
         
         GameObject newClone = Instantiate(clonePrefab);
-        newClone.GetComponent<CloneSkillController>().SetupClone(clonePosition, cloneDuration,canAttack,_offset,FindClosestEnemy(newClone.transform),canDuplicateClone,chanceToDuplicate,player);
-    }
-
-    public void CreateCloneOnDashStart()
-    {
-        if (creatCloneOnDashStart)
-            CreateClone(player.transform, Vector3.zero);
-        
-    }
-
-    public void CreateCloneOnDashOver()
-    {
-        if (creatCloneOnDashOver)
-            CreateClone(player.transform, Vector3.zero);
+        newClone.GetComponent<CloneSkillController>().SetupClone(clonePosition, cloneDuration,canAttack,_offset,FindClosestEnemy(newClone.transform),canDuplicateClone,chanceToDuplicate,player,attackMultiplier);
     }
     
-    public void CreateCloneOnCounterAttack(Transform _enemyTransform)
+    public void CreateCloneWithDelay(Transform _enemyTransform)
     {
-        if (canCloneOnCounterAttack)
-            StartCoroutine(CreateCloneWithDelay(_enemyTransform, new Vector3(1f * player.facingDir, 0)));
-
+            StartCoroutine(CloneDelayCoroutine(_enemyTransform, new Vector3(1f * player.facingDir, 0)));
     }
 
-    private IEnumerator CreateCloneWithDelay(Transform _transform, Vector3 _offset)
+    private IEnumerator CloneDelayCoroutine(Transform _transform, Vector3 _offset)
     {
         yield return new WaitForSeconds(.4f);
         CreateClone(_transform, _offset);

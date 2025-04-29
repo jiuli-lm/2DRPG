@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public enum SwordType
 {
@@ -15,32 +16,46 @@ public enum SwordType
 public class SwordSkill : Skill
 {
     public SwordType swordType = SwordType.Bounce;
-    
-    [Header("反弹技能")]
+
+    [Header("反弹技能")] 
+    [SerializeField] private UI_SkillTreeSlot bounceUnlockButton;
     [SerializeField] private int bounceAmount;
     [SerializeField] private float bounceGravity;
+    [SerializeField] private float bounceSpeed;
     
     [Header("穿刺技能")]
+    [SerializeField] private UI_SkillTreeSlot pierceUnlockButton;
     [SerializeField] private int pierceAmount;
     [SerializeField] private float pierceGravity;
 
     [Header("旋转技能")] 
+    [SerializeField] private UI_SkillTreeSlot spinUnlockButton;
     [SerializeField] private float hitCooldown;
     [SerializeField] private float maxTravelDistance;
     [SerializeField] private float spinDuration;
     [SerializeField] private float spinGravity;
     
     [Header("技能信息")]
+    [SerializeField] private UI_SkillTreeSlot swordUnlockButton;
+    public bool swordUnlocked{get; private set;}
     [SerializeField] private GameObject swordPrefab;
-
     [SerializeField] private Vector2 launchForce;
     [SerializeField] private float swordGravity;
+    [SerializeField] private float freezeTimeDuration;
+    [SerializeField] private float returnSpeed;
 
+    [Header("被动技能")] 
+    [SerializeField] private UI_SkillTreeSlot timeStopUnlockButton;
+    public bool timeStopUnlocked{get; private set;}
+    [SerializeField] private UI_SkillTreeSlot vulnerableUnLockButton;
+    public bool vulnerableUnLocked{get; private set;} 
+    
+    
     private Vector2 finalDir;
     
     [Header("Aim daots")]
     [SerializeField] private int numberOfDots;
-    [SerializeField] private float spaceBeetweenDots;
+    [SerializeField] private float spaceBetweenDots;
     [SerializeField] private GameObject dotPrefab;
     [SerializeField] private Transform dotsParent;
 
@@ -51,6 +66,13 @@ public class SwordSkill : Skill
         base.Start();
         GenerateDots();
         SetupGravity();
+        
+        swordUnlockButton.GetComponent<Button>().onClick.AddListener(UnlockSword);
+        bounceUnlockButton.GetComponent<Button>().onClick.AddListener(UnlockBounceSword);
+        pierceUnlockButton.GetComponent<Button>().onClick.AddListener(UnlockPierceSword);
+        spinUnlockButton.GetComponent<Button>().onClick.AddListener(UnlockSpinSword);
+        timeStopUnlockButton.GetComponent<Button>().onClick.AddListener(UnlockTimeStop);
+        vulnerableUnLockButton.GetComponent<Button>().onClick.AddListener(UnlockVulnerable);
     }
 
     private void SetupGravity()
@@ -74,7 +96,7 @@ public class SwordSkill : Skill
         {
             for (int i = 0; i < dots.Length; i++)
             {
-                dots[i].transform.position = DotsPosition(i * spaceBeetweenDots);
+                dots[i].transform.position = DotsPosition(i * spaceBetweenDots);
             }
         }
     }
@@ -91,12 +113,54 @@ public class SwordSkill : Skill
         else if (swordType == SwordType.Spin)
             newSwordScript.SetupSpin(true, maxTravelDistance, spinDuration,hitCooldown);
         
-        newSwordScript.SetupSword(finalDir,swordGravity,player);
+        newSwordScript.SetupSword(finalDir,swordGravity,player,freezeTimeDuration,returnSpeed);
         
         player.AssignNewSword(newSword);
         
         DotsActive(false); 
     }
+
+    #region 技能解锁
+
+    private void UnlockTimeStop()
+    {
+        if(timeStopUnlockButton.unlocked)
+            timeStopUnlocked = true;
+    }
+    private void UnlockVulnerable()
+    {
+        if(vulnerableUnLockButton.unlocked)
+            vulnerableUnLocked = true;
+    }
+
+    private void UnlockSword()
+    {
+        if(swordUnlockButton.unlocked)
+        {
+            swordType = SwordType.Regular;
+            swordUnlocked = true;
+        }
+    }
+
+    private void UnlockBounceSword()
+    {
+        if (bounceUnlockButton.unlocked)
+            swordType = SwordType.Bounce;
+    }
+
+    private void UnlockPierceSword()
+    {
+        if (pierceUnlockButton.unlocked)
+            swordType = SwordType.Pierce;
+    }
+
+    private void UnlockSpinSword()
+    {
+        if (spinUnlockButton.unlocked)
+            swordType = SwordType.Spin;
+    }
+
+    #endregion
     
     
     #region 瞄准线

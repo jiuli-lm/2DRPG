@@ -7,8 +7,6 @@ using UnityEngine.Serialization;
 
 public class SwordSkillController : MonoBehaviour
 {
-    [SerializeField]
-    private float returnSpeed = 12;
     private Animator animator;
     private Rigidbody2D rb;
     private Collider2D cd;
@@ -17,15 +15,16 @@ public class SwordSkillController : MonoBehaviour
     private bool canRotate = true;
     private bool isReturning;
 
+    private float freezeTimeDuration;
+    private float returnSpeed = 12;
+    
     [Header("穿刺信息")]
     private float pierceAmount;
-    
-    
     
     [Header("反弹信息")]
     [SerializeField] private float bounceSpeed;
     private bool isBouncing;
-    private int bounceAmout;
+    private int bounceAmount;
     private List<Transform> enemyTarget;
     private int targetIndex;
     
@@ -34,7 +33,7 @@ public class SwordSkillController : MonoBehaviour
     private float spinDuration;
     private float spinTimer;
     private bool wasStopped;
-    private bool isSipnning;
+    private bool isSpinning;
 
     private float hitTimer;
     private float hitCooldown;
@@ -46,15 +45,23 @@ public class SwordSkillController : MonoBehaviour
         cd = GetComponent<Collider2D>();
     }
 
-    public void SetupSword(Vector2 dir, float gravityScale,Player _player)
+    private void DestroyMe()
+    {
+        Destroy(gameObject);
+    }
+
+    public void SetupSword(Vector2 _dir, float _gravityScale, Player _player, float _freezeTimeDuration, float _returnSpeed)
     {
         player = _player;
-        
-        rb.velocity = dir;
-        rb.gravityScale = gravityScale;
-        
-        if(pierceAmount <=0)
+        freezeTimeDuration = _freezeTimeDuration;
+        returnSpeed = _returnSpeed;
+        rb.velocity = _dir;
+        rb.gravityScale = _gravityScale;
+
+        if (pierceAmount <= 0)
             animator.SetBool("Rotation", true);
+        
+        Invoke("DestroyMe", 7);
     }
 
     public void SetupPierce(int _pierceAmount)
@@ -65,14 +72,14 @@ public class SwordSkillController : MonoBehaviour
     public void SetupBounce(bool _isBouncing,int _amountOfBounces)
     {
         isBouncing = _isBouncing;
-        bounceAmout = _amountOfBounces;
+        bounceAmount = _amountOfBounces;
         
         enemyTarget = new List<Transform>();
     }
     
     public void SetupSpin(bool _isSpining,float _maxTravelDistance, float _spinDuration,float _hitCooldown)
     {
-        isSipnning = _isSpining;
+        isSpinning = _isSpining;
         maxTravelDistance = _maxTravelDistance;
         spinDuration = _spinDuration;
         hitCooldown = _hitCooldown;
@@ -95,9 +102,8 @@ public class SwordSkillController : MonoBehaviour
             transform.position = Vector2.MoveTowards(transform.position,
                 player.transform.position,returnSpeed * Time.deltaTime);
             if (Vector2.Distance(transform.position, player.transform.position) < 1)
-            {
                 player.CatchTheSword();
-            }
+            
         }
 
         BounceLogic();
@@ -107,7 +113,7 @@ public class SwordSkillController : MonoBehaviour
 
     private void SpinLogic()
     {
-        if (isSipnning)
+        if (isSpinning)
         {
             if (Vector2.Distance(player.transform.position, transform.position) > maxTravelDistance && !wasStopped)
             {
@@ -117,12 +123,12 @@ public class SwordSkillController : MonoBehaviour
             if (wasStopped)
             {
                 spinTimer -= Time.deltaTime;
-                transform.position = Vector2.MoveTowards(transform.position, new Vector2(transform.position.x + 1, transform.position.y),2.4f * Time.deltaTime);
+                //transform.position = Vector2.MoveTowards(transform.position, new Vector2(transform.position.x + 1, transform.position.y),2.4f * Time.deltaTime);
                 
                 if (spinTimer < 0)
                 {
                     isReturning = true;
-                    isSipnning = false;
+                    isSpinning = false;
                 }
                 hitTimer -= Time.deltaTime;
                 if (hitTimer < 0)
@@ -151,16 +157,17 @@ public class SwordSkillController : MonoBehaviour
     {
         if (isBouncing && enemyTarget.Count > 0)
         {
+            
             transform.position = Vector2.MoveTowards(transform.position,
                 enemyTarget[targetIndex].position, bounceSpeed * Time.deltaTime);
             if (Vector2.Distance(transform.position, enemyTarget[targetIndex].position) < .1f)
             {
-                //enemyTarget[targetIndex].GetComponent<Enemy>().DamageEffect();
+
                 SwordSkillDamage(enemyTarget[targetIndex].GetComponent<Enemy>());
                 
                 targetIndex++;
-                bounceAmout--;
-                if (bounceAmout <= 0)
+                bounceAmount--;
+                if (bounceAmount <= 0)
                 {
                     isBouncing = false;
                     isReturning = true;
@@ -185,12 +192,21 @@ public class SwordSkillController : MonoBehaviour
     }
 
     private void SwordSkillDamage(Enemy enemy)
-    {
-        player.stats.DoDamage(enemy.GetComponent<CharacterStats>());
-       // enemy.StartCoroutine("FreezeTimerFor", freezeTimeDuration);
-       ItemData_Equipment equipedAmulet = Inventory.Instance?.GetEquipment(EquipmentType.Amulet);
+    { 
+        EnemyStats enemyStats = enemy.GetComponent<EnemyStats>();
+        
+        player.stats.DoDamage(enemyStats);
+        
+        //冻结没做
+        // if(player.skill.sword.timeStopUnlocked)
+        //     enemy.FreezeTimerFor(freezeTimeDuration);
+        
+        if(player.skill.sword.timeStopUnlocked)
+            enemyStats.MakeVulnerableFor(freezeTimeDuration);
+        
+        ItemData_Equipment equipedAmulet = Inventory.Instance?.GetEquipment(EquipmentType.Amulet);
             
-       if(equipedAmulet != null)
+        if(equipedAmulet != null)
            equipedAmulet.Effect(enemy.transform);
     }
     
@@ -220,7 +236,7 @@ public class SwordSkillController : MonoBehaviour
             return;
         }
 
-        if (isSipnning)
+        if (isSpinning)
         {
             StopWhenSpinning();//在此处为碰到第一个敌人停止
             return;

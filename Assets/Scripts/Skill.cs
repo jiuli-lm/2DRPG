@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class Skill : MonoBehaviour
 {
-    [SerializeField] 
-    protected float cooldown;
+    public float cooldown;
     protected float cooldownTimer; // 技能冷却时间
 
     protected Player player;

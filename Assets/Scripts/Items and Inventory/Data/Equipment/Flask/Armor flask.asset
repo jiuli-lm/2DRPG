@@ -12,13 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad8459395db171c4587673e8ba472c14, type: 3}
   m_Name: Armor flask
   m_EditorClassIdentifier: 
-  itemType: 0
-  itemName: 
-  icon: {fileID: 0}
+  itemType: 1
+  itemName: Armor flask
+  icon: {fileID: -165920498, guid: a9ca9a41598dd2e44b125928045c518f, type: 3}
   dropChance: 0
   itemCooldown: 0
-  itemEffects: []
-  equipmentType: 0
+  itemEffects:
+  - {fileID: 11400000, guid: 3e2d304181fd0eb4ba14dab210fb60fe, type: 2}
+  - {fileID: 11400000, guid: 9a4660eb0fc330647b2790522e654202, type: 2}
+  equipmentType: 3
   strength: 0
   agility: 0
   intelligence: 0

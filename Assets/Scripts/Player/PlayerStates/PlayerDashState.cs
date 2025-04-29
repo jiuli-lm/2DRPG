@@ -10,7 +10,7 @@ public class PlayerDashState : PlayerState
     public override void Enter()
     {
         base.Enter();
-        player.skill.clone.CreateCloneOnDashStart();
+        player.skill.dash.CloneOnDash();
         stateTimer = player.dashDuration; // 设置冲刺状态的持续时间
     }
     public override void Update()
@@ -32,7 +32,7 @@ public class PlayerDashState : PlayerState
     public override void Exit()
     {
         base.Exit();
-        player.skill.clone.CreateCloneOnDashOver();
+        player.skill.dash.CloneOnArrival();
         player.SetVelocity(0, rb.velocity.y); // 冲刺结束后将水平速度设置为0
     }
     

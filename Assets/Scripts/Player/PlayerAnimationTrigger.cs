@@ -21,8 +21,9 @@ public class PlayerAnimationTrigger : MonoBehaviour
                 
                 // 修改前
                 // hit.GetComponent<Enemy>().Damage();
-
-                Inventory.Instance?.GetEquipment(EquipmentType.Weapon)?.Effect(_target.transform);
+                ItemData_Equipment weaponData = Inventory.Instance.GetEquipment(EquipmentType.Weapon);
+                if(weaponData != null)
+                    weaponData.Effect(_target.transform);
             }
         }
     }
